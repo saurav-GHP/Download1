@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Game Page</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:#00ff9c;
+font-family:monospace;
+text-align:center;
+overflow:hidden;
+}
+
+/* LOGO */
+
+.logo{
+width:320px;
+margin-top:40px;
+filter: drop-shadow(0 0 15px #00ff9c);
+}
+
+/* MATRIX BACKGROUND */
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* TERMINAL */
+
+#terminal{
+width:90%;
+max-width:800px;
+margin:40px auto;
+background:black;
+border:1px solid #00ff9c;
+padding:20px;
+text-align:left;
+box-shadow:0 0 20px #00ff9c;
+height:260px;
+overflow-y:auto;
+}
+
+/* INPUT */
+
+#cmd{
+width:100%;
+background:black;
+border:none;
+color:#00ff9c;
+outline:none;
+font-family:monospace;
+font-size:16px;
+}
+
+/* PROGRESS BAR */
+
+#progress{
+width:90%;
+max-width:800px;
+margin:auto;
+border:1px solid #00ff9c;
+background:#001a12;
+display:none;
+}
+
+#bar{
+height:20px;
+width:0%;
+background:#00ff9c;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGO -->
+<img src="logo.png" class="logo">
+
+<h1>SECURE GAME SERVER</h1>
+
+<!-- TERMINAL -->
+
+<div id="terminal">
+
+<div>> type <b>help</b> for commands</div>
+
+<input id="cmd" placeholder="enter command">
+
+</div>
+
+<!-- DOWNLOAD PROGRESS -->
+
+<div id="progress">
+<div id="bar"></div>
+</div>
+
+<!-- MATRIX SCRIPT -->
+
+<canvas id="matrix"></canvas>
+
+<script>
+
+/* MATRIX BACKGROUND */
+
+const canvas=document.getElementById("matrix");
+const ctx=canvas.getContext("2d");
+
+canvas.height=window.innerHeight;
+canvas.width=window.innerWidth;
+
+let letters="01".split("");
+let fontSize=14;
+let columns=canvas.width/fontSize;
+
+let drops=[];
+
+for(let x=0;x<columns;x++)
+drops[x]=1;
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#0f0";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+
+let text=letters[Math.floor(Math.random()*letters.length)];
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0;
+
+drops[i]++;
+
+}
+
+}
+
+setInterval(draw,33);
+
+
+/* TERMINAL COMMANDS */
+
+const cmdInput=document.getElementById("cmd");
+const terminal=document.getElementById("terminal");
+
+cmdInput.addEventListener("keydown",function(e){
+
+if(e.key==="Enter"){
+
+let cmd=this.value.toLowerCase();
+
+let line=document.createElement("div");
+line.innerText="> "+cmd;
+terminal.appendChild(line);
+
+this.value="";
+
+if(cmd==="help"){
+
+addOutput("commands:");
+addOutput("download - download the game");
+addOutput("scan - scan server");
+addOutput("clear - clear terminal");
+
+}
+
+else if(cmd==="scan"){
+
+addOutput("scanning network...");
+setTimeout(()=>addOutput("ip found: 192.168.1.5"),800);
+setTimeout(()=>addOutput("server located"),1500);
+setTimeout(()=>addOutput("ready for download"),2000);
+
+}
+
+else if(cmd==="download"){
+
+startDownload();
+
+}
+
+else if(cmd==="clear"){
+
+terminal.innerHTML="";
+
+}
+
+else{
+
+addOutput("unknown command");
+
+}
+
+}
+
+});
+
+function addOutput(text){
+
+let div=document.createElement("div");
+div.innerText=text;
+terminal.appendChild(div);
+
+}
+
+
+/* DOWNLOAD */
+
+function startDownload(){
+
+document.getElementById("progress").style.display="block";
+
+let bar=document.getElementById("bar");
+
+let width=0;
+
+let interval=setInterval(function(){
+
+if(width>=100){
+
+clearInterval(interval);
+
+window.location.href="https://mega.nz/file/0C9zDCBa#PGg9XSCcbUlr2XK99N7xPowE2HbhlB7QsW7abld8c4A";
+
+}else{
+
+width++;
+bar.style.width=width+"%";
+
+}
+
+},40);
+
+}
+
+</script>
+
+</body>
+</html>
